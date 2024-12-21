@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merge Video and Audio</title>
+</head>
+<body>
+    <h1>Merge Video and Audio Links</h1>
+    <p>Enter the video and audio URLs below to proxy them and prepare for merging.</p>
+
+    <!-- Input fields for video and audio URLs -->
+    <label for="videoUrl">Video URL:</label>
+    <input type="text" id="videoUrl" placeholder="Enter video URL" size="50">
+    <br><br>
+    <label for="audioUrl">Audio URL:</label>
+    <input type="text" id="audioUrl" placeholder="Enter audio URL" size="50">
+    <br><br>
+
+    <!-- Button to trigger the merge -->
+    <button onclick="proxyLinks()">Generate Proxied Links</button>
+
+    <!-- Output area -->
+    <h3>Result:</h3>
+    <div id="output"></div>
+
+    <script>
+        async function proxyLinks() {
+            // Get the user-provided video and audio URLs
+            const videoUrl = document.getElementById("videoUrl").value;
+            const audioUrl = document.getElementById("audioUrl").value;
+
+            // Validate inputs
+            if (!videoUrl || !audioUrl) {
+                alert("Please enter both video and audio URLs.");
+                return;
+            }
+
+            // Add the CORS Anywhere proxy (local server)
+            const proxy = "http://localhost:3000/";
+
+            // Create proxied URLs
+            const proxiedVideoUrl = proxy + videoUrl;
+            const proxiedAudioUrl = proxy + audioUrl;
+
+            try {
+                // Test the video URL with required headers
+                await fetch(proxiedVideoUrl, {
+                    headers: { "x-requested-with": "XMLHttpRequest" }
+                });
+
+                // Test the audio URL with required headers
+                await fetch(proxiedAudioUrl, {
+                    headers: { "x-requested-with": "XMLHttpRequest" }
+                });
+
+                // Display the proxied URLs
+                const outputElement = document.getElementById("output");
+                outputElement.innerHTML = `
+                    <strong>Proxied Video URL:</strong> <a href="${proxiedVideoUrl}" target="_blank">${proxiedVideoUrl}</a><br>
+                    <strong>Proxied Audio URL:</strong> <a href="${proxiedAudioUrl}" target="_blank">${proxiedAudioUrl}</a>
+                `;
+            } catch (error) {
+                alert("Error generating proxied links. Ensure your proxy server is running and URLs are correct.");
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

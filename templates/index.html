@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Downloader</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1>Video Downloader</h1>
+        <p>Download any video by just pasting the video URL.</p>
+    </header>
+
+    <!-- Main Form Section -->
+    <main>
+        <section id="download-form">
+            <h2>Download Your Video</h2>
+            <form action="/download" method="post">
+                <label for="video-url">Video URL:</label>
+                <input type="url" id="video-url" name="video_url" placeholder="Paste video URL here" required>
+                <button type="submit">Download</button>
+            </form>
+        </section>
+    </main>
+
+
+    <!-- Optional Features Section -->
+    <section id="features">
+        <h3>How to Use</h3>
+        <p>1. Copy the video link from the platform you want to download.</p>
+        <p>2. Paste it into the field above.</p>
+        <p>3. Click "Download" to start the process.</p>
+
+        <h3>Supported Platforms</h3>
+        <ul>
+            <li>YouTube</li>
+            <li>Vimeo</li>
+            <li>Dailymotion</li>
+        </ul>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Video Downloader. All rights reserved.</p>
+        <nav>
+            <a href="#">About</a> |
+            <a href="#">Privacy Policy</a> |
+            <a href="#">Contact</a>
+        </nav>
+    </footer>
+
+    <script src="/static/script/script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merge Audio and Video</title>
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.3/dist/ffmpeg.min.js"></script>
+</head>
+<body>
+  <h1>Merge Audio and Video</h1>
+  <p>Click the button to merge the audio and video files.</p>
+  <button id="mergeBtn">Merge and Download</button>
+  <p id="status"></p>
+  <a id="downloadLink" style="display:none;">Download Merged Video</a>
+
+  <script>
+    const audioUrl = "http://localhost:3000/https://rr4---sn-4wg7lnel.googlevideo.com/videoplayback?expire=1734788547&ei=Y3FmZ8_rIZLVmLAPjt2igQI&ip=2400%3Aadc7%3A3910%3A5a00%3A8da4%3A8ba2%3A81b3%3A75ae&id=o-ABsZeVsJLMYC4j4BP4vHWHi1Z3Q-P-qucklDfY5qY48q&itag=251&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI-JuoTapJy54SK3XFHbsfupESdz9nqVAauJU3S6blnzRgUQGmFlQgbMIkJhotuFyd_nDtXpzhpi&spc=x-caUPfeaZCHstebeNy8x1tNmYLd8LqX-P14DW_7mE46GCCHPXfc&vprv=1&svpuc=1&xtags=drc%3D1&mime=audio%2Fwebm&rqh=1&gir=yes&clen=9898999&dur=612.041&lmt=1733340328829706&keepalive=yes&fexp=24350590,24350737,24350827,24350851,51326932,51335594,51371294&c=IOS&txp=5318224&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cxtags%2Cmime%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRgIhAIEi5Z3isOOh9WxHfIlyZIy_kfnp16Mib_0j2wF0NB3vAiEA81OeHDLx8BSEkwgVuRsfb19tnhxWzyFl0DrXhP6xC4Q%3D&redirect_counter=1&cm2rm=sn-jtcxg-aixd7e&rrc=80&req_id=926da3d3c345a3ee&cms_redirect=yes&cmsv=e&met=1734766991,&mh=F7&mm=29&mn=sn-4wg7lnel&ms=rdu&mt=1734766627&mv=m&mvi=4&pl=44&rms=rdu,au&lsparams=met,mh,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRAIgVmU15yESe2eYzmTkwfbUerkiA42kTRm5bUIFlyo7H7kCIC0N43D-ea2f9jwtQBKdvsMHT5qI4ft_26kIml1IQ3VX"; // Proxied audio URL
+    const videoUrl = "http://localhost:3000/https://rr1---sn-jtcxg-aixd.googlevideo.com/videoplayback?expire=1734789094&ei=hnNmZ6yiM7zVmLAP3JHwkAw&ip=2400%3Aadc7%3A3910%3A5a00%3A8da4%3A8ba2%3A81b3%3A75ae&id=o-ANhZb6SlF4Xnn3LKUf_MfaWgeV06DgxJLz6qBHvyw2xu&itag=137&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&met=1734767494%2C&mh=F7&mm=31%2C29&mn=sn-jtcxg-aixd%2Csn-4wg7lnel&ms=au%2Crdu&mv=m&mvi=1&pl=44&rms=au%2Cau&initcwndbps=561250&bui=AfMhrI9PHXxSdmpvdA6gTWeCuhgzQdjmRfuawSUSQhlzwzTUOEcbIot_sh13oUS8dsxYepEs1MlqG4N2&spc=x-caUH6gg83jJ0sUlKiPWZm8PGs9Y5BFTH0zK_uTZ6-BGXuQMWAM&vprv=1&svpuc=1&mime=video%2Fmp4&rqh=1&gir=yes&clen=56537173&dur=612.000&lmt=1733340335011202&mt=1734767110&fvip=4&keepalive=yes&fexp=51326932%2C51335594%2C51371294&c=IOS&txp=5309224&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRgIhAKLLAfE_JPr2z5IcpDtI5Wtgf43cfinladRcEESHetyHAiEAsu0JZ0LC1sbtNavBQ1WVZW_fU_-CPXCkDLAycymGSUw%3D&lsparams=met%2Cmh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Crms%2Cinitcwndbps&lsig=AGluJ3MwRgIhAO8cTsX6Sn82XwoOzu7Mt-r2pi4GJWc4oRKpVQP2Cm2GAiEA7XH7db63RxFtV73GbU6Qhf4JE7QDFZC76gFmFrGTQTw%3D"; // Proxied video URL
+
+    document.getElementById("mergeBtn").addEventListener("click", async () => {
+      const status = document.getElementById("status");
+      const downloadLink = document.getElementById("downloadLink");
+      status.textContent = "Loading FFmpeg...";
+      
+      // Load FFmpeg
+      const { createFFmpeg, fetchFile } = FFmpeg;
+      const ffmpeg = createFFmpeg({ log: true });
+      await ffmpeg.load();
+      status.textContent = "Fetching files...";
+
+      try {
+        // Fetch video and audio files using proxied URLs
+        const videoData = await fetchFile(videoUrl);
+        const audioData = await fetchFile(audioUrl);
+
+        // Write fetched files into FFmpeg's virtual filesystem
+        ffmpeg.FS("writeFile", "input.mp4", videoData);
+        ffmpeg.FS("writeFile", "input.webm", audioData);
+
+        // Run FFmpeg command to merge video and audio
+        status.textContent = "Merging files...";
+        await ffmpeg.run("-i", "input.mp4", "-i", "input.webm", "-c:v", "copy", "-c:a", "aac", "output.mp4");
+
+        // Read the output file from FFmpeg's filesystem
+        const mergedData = ffmpeg.FS("readFile", "output.mp4");
+
+        // Create a downloadable Blob object from the merged file
+        const blob = new Blob([mergedData.buffer], { type: "video/mp4" });
+        const url = URL.createObjectURL(blob);
+
+        // Display the download link
+        downloadLink.href = url;
+        downloadLink.download = "merged-video.mp4";
+        downloadLink.style.display = "block";
+        downloadLink.textContent = "Download Merged Video";
+        status.textContent = "Merge complete!";
+      } catch (error) {
+        console.error("Error during merging:", error);
+        status.textContent = "An error occurred. Please ensure the proxy server is running and URLs are correct.";
+      }
+    });
+  </script>
+</body>
+</html>
